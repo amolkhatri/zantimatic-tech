@@ -3,12 +3,11 @@ import BaseHead from '../../components/BaseHead.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
-import { getCollection } from 'astro:content';
 import FormattedDate from '../../components/FormattedDate.astro';
+import { getAllBlogPosts } from '../../lib/notion';
 
-const posts = (await getCollection('blog')).sort(
-	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
-);
+// Get posts from Notion API
+const posts = await getAllBlogPosts();
 ---
 
 <!doctype html>
@@ -16,71 +15,79 @@ const posts = (await getCollection('blog')).sort(
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
 		<style>
+			html, body {
+				height: 100%;
+				margin: 0;
+			}
+			body {
+				display: flex;
+				flex-direction: column;
+				min-height: 100vh;
+			}
 			main {
 				width: 960px;
+				max-width: calc(100% - 2em);
+				margin: 0 auto;
+				padding: 3em 1em;
+				flex: 1;
 			}
 			ul {
-				display: flex;
-				flex-wrap: wrap;
-				gap: 2rem;
 				list-style-type: none;
 				margin: 0;
 				padding: 0;
 			}
 			ul li {
-				width: calc(50% - 1rem);
-			}
-			ul li * {
-				text-decoration: none;
-				transition: 0.2s ease;
-			}
-			ul li:first-child {
-				width: 100%;
-				margin-bottom: 1rem;
-				text-align: center;
-			}
-			ul li:first-child img {
-				width: 100%;
-			}
-			ul li:first-child .title {
-				font-size: 2.369rem;
-			}
-			ul li img {
-				margin-bottom: 0.5rem;
-				border-radius: 12px;
-			}
-			ul li a {
-				display: block;
+				margin-bottom: 1.5rem;
+				padding-bottom: 1.5rem;
+				border-bottom: 1px solid rgba(var(--gray), 0.3);
 			}
 			.title {
 				margin: 0;
 				color: rgb(var(--black));
-				line-height: 1;
+				font-size: 1.5rem;
 			}
-			.date {
-				margin: 0;
+			.meta {
+				display: flex;
+				gap: 1rem;
+				flex-wrap: wrap;
+				margin: 0.5rem 0;
 				color: rgb(var(--gray));
+				align-items: center;
 			}
-			ul li a:hover h4,
-			ul li a:hover .date {
+			.category {
+				background-color: rgba(var(--accent), 0.2);
+				color: rgb(var(--accent));
+				padding: 0.2rem 0.5rem;
+				border-radius: 0.3rem;
+				font-weight: 500;
+				font-size: 0.9rem;
+			}
+			.author {
+				font-style: italic;
+				font-size: 0.9rem;
+			}
+			.post-link {
+				text-decoration: none;
+			}
+			.post-link:hover .title {
 				color: rgb(var(--accent));
 			}
-			ul a:hover img {
-				box-shadow: var(--box-shadow);
+			.tags {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 0.5rem;
+				margin-top: 0.5rem;
+			}
+			.tag {
+				background-color: rgba(var(--accent), 0.1);
+				color: rgb(var(--accent));
+				padding: 0.2rem 0.5rem;
+				border-radius: 0.3rem;
+				font-size: 0.8rem;
 			}
 			@media (max-width: 720px) {
-				ul {
-					gap: 0.5em;
-				}
-				ul li {
-					width: 100%;
-					text-align: center;
-				}
-				ul li:first-child {
-					margin-bottom: 0;
-				}
-				ul li:first-child .title {
-					font-size: 1.563em;
+				main {
+					padding: 1em;
 				}
 			}
 		</style>
@@ -93,12 +100,13 @@ const posts = (await getCollection('blog')).sort(
 					{
 						posts.map((post) => (
 							<li>
-								<a href={`/blog/${post.id}/`}>
-									<img width={720} height={360} src={post.data.heroImage} alt="" />
-									<h4 class="title">{post.data.title}</h4>
-									<p class="date">
-										<FormattedDate date={post.data.pubDate} />
-									</p>
+								<a href={`/blog/${post.slug}/`} class="post-link">
+									<div class="meta" style="display: flex; justify-content: space-between;">
+										<h2 class="title">{post.title}</h2>
+										<span class="date">
+											<FormattedDate date={post.date} />
+										</span>
+									</div>
 								</a>
 							</li>
 						))
@@ -106,6 +114,6 @@ const posts = (await getCollection('blog')).sort(
 				</ul>
 			</section>
 		</main>
-		<Footer />
+		<!-- <Footer /> -->
 	</body>
 </html>

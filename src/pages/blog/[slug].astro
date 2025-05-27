@@ -1,0 +1,152 @@
+---
+import { getBlogPostBySlug, getAllBlogPosts } from '../../lib/notion';
+import BaseHead from '../../components/BaseHead.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import FormattedDate from '../../components/FormattedDate.astro';
+import { marked } from 'marked';
+
+export async function getStaticPaths() {
+  const posts = await getAllBlogPosts();
+  
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post: {
+      ...post,
+      content: marked(post.content) // Convert markdown to HTML
+    }},
+  }));
+}
+
+const { post } = Astro.props;
+---
+
+<html lang="en">
+  <head>
+    <BaseHead title={post.title} description={post.description} />
+    <style>
+      main {
+        width: 100%;
+        max-width: 100%;
+        margin: 0 auto;
+        padding: 3em 1em;
+      }
+      .hero-image {
+        width: 100%;
+      }
+      .hero-image img {
+        display: block;
+        margin: 0 auto;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+      }
+      .title {
+        margin-bottom: 0.5em;
+        padding: 0;
+      }
+      .meta {
+        margin-bottom: 2em;
+        color: rgb(var(--gray));
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        align-items: center;
+      }
+      .category {
+        background-color: rgba(var(--accent), 0.2);
+        color: rgb(var(--accent));
+        padding: 0.3rem 0.8rem;
+        border-radius: 0.3rem;
+        font-weight: 500;
+      }
+      .author {
+        font-style: italic;
+      }
+      .prose {
+        width: calc(100% - 2em);
+        max-width: 100%;
+        margin: auto;
+        padding: 1em;
+        color: rgb(var(--gray-dark));
+      }
+      /* .prose :global(h2) {
+        margin-top: 2em;
+        margin-bottom: 0.5em;
+        color: rgb(var(--gray-dark));
+      } */
+      .prose :global(p) {
+        margin-top: 1em;
+        margin-bottom: 1em;
+        line-height: 1.75;
+      }
+      .prose :global(img) {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+      }
+      .prose :global(blockquote) {
+        padding-left: 1em;
+        border-left: 4px solid rgba(var(--accent), 100%);
+        font-style: italic;
+      }
+      .prose :global(a) {
+        color: rgb(var(--accent));
+      }
+      .prose :global(ul) {
+        margin: 1em 0;
+        padding-left: 1.5em;
+      }
+      .prose :global(li) {
+        margin: 0.5em 0;
+      }
+      .tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin: 1rem 0;
+      }
+      .tag {
+        background-color: rgba(var(--accent), 0.1);
+        color: rgb(var(--accent));
+        padding: 0.2rem 0.5rem;
+        border-radius: 0.3rem;
+        font-size: 0.8rem;
+      }
+      @media (max-width: 720px) {
+        .prose {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <Header />
+    <main>
+      <article>
+        <div class="prose">
+          <h1 class="title">{post.title}</h1>
+          <div class="meta">
+            {post.category && <span class="category">{post.category}</span>}
+            <span class="date">
+              <FormattedDate date={post.date} />
+              {
+                post.lastEdited > post.date && (
+                  <span> · Updated: <FormattedDate date={post.lastEdited} /></span>
+                )
+              }
+            </span>
+            {post.author && <span class="author">By {post.author}</span>}
+          </div>
+          <div class="tags">
+            {post.tags.map((tag: string) => (
+              <span class="tag">{tag}</span>
+            ))}
+          </div>
+          <div set:html={post.content} />
+        </div>
+      </article>
+    </main>
+    <!-- <Footer /> -->
+  </body>
+</html> 

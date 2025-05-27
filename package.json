@@ -9,9 +9,23 @@
     "astro": "astro"
   },
   "dependencies": {
+    "20": "^3.1.9",
     "@astrojs/mdx": "^4.3.0",
     "@astrojs/rss": "^4.0.11",
     "@astrojs/sitemap": "^3.4.0",
-    "astro": "^5.8.0"
+    "@notionhq/client": "^3.1.2",
+    "@tailwindcss/vite": "^4.1.7",
+    "astro": "^5.8.0",
+    "marked": "^15.0.12",
+    "notion-astro-loader": "^0.4.0",
+    "notion-to-md": "^3.1.9",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-markdown": "^10.1.0",
+    "tailwindcss": "^4.1.7"
+  },
+  "devDependencies": {
+    "@types/marked": "^5.0.2",
+    "@types/prismjs": "^1.26.5"
   }
 }
