@@ -112,7 +112,7 @@ async function getDBProperties() {
     const response = await notion.databases.retrieve({
       database_id: import.meta.env.NOTION_DATABASE_ID,
     });
-    console.log('Database properties:', JSON.stringify(response.properties, null, 2));
+    // console.log('Database properties:', JSON.stringify(response.properties, null, 2));
     return response.properties;
   } catch (error) {
     console.error('Error fetching database properties:', error);
@@ -140,13 +140,13 @@ export async function getAllBlogPosts(): Promise<NotionBlogPost[]> {
     console.log(`Found ${response.results.length} pages in the database`);
 
     // Log the first result to see its structure
-    if (response.results.length > 0) {
-      const firstPage = response.results[0] as any;
-      if (firstPage.properties) {
-        console.log('First page properties:', 
-          JSON.stringify(firstPage.properties, null, 2));
-      }
-    }
+    // if (response.results.length > 0) {
+    //   const firstPage = response.results[0] as any;
+    //   // if (firstPage.properties) {
+    //   //   console.log('First page properties:', 
+    //   //     JSON.stringify(firstPage.properties, null, 2));
+    //   // }
+    // }
 
     // Map the response to our NotionBlogPost type
     const posts = await Promise.all(

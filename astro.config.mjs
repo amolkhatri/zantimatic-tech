@@ -14,6 +14,7 @@ export default defineConfig({
 		define: {
 			'import.meta.env.NOTION_API_KEY': JSON.stringify(process.env.NOTION_API_KEY),
 			'import.meta.env.NOTION_DATABASE_ID': JSON.stringify(process.env.NOTION_DATABASE_ID),
+			'import.meta.env.BASE_URL': JSON.stringify("/zantimatic-tech"),
 		},
 	},
 });

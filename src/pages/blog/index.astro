@@ -100,7 +100,7 @@ const posts = await getAllBlogPosts();
 					{
 						posts.map((post) => (
 							<li>
-								<a href={`/blog/${post.slug}/`} class="post-link">
+								<a href={`${import.meta.env.BASE_URL}/blog/${post.slug}/`} class="post-link">
 									<div class="meta" style="display: flex; justify-content: space-between;">
 										<h2 class="title">{post.title}</h2>
 										<span class="date">
